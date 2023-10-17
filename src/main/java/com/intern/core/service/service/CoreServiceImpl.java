@@ -20,12 +20,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
+import com.intern.core.service.dto.SemesterResponse;
 import com.intern.core.service.dao.ApplicationRepository;
 import com.intern.core.service.dao.CompanyRepository;
 import com.intern.core.service.dao.CriteriaRepository;
 import com.intern.core.service.dao.EvaluationRepository;
 import com.intern.core.service.dao.QuestionRepository;
 import com.intern.core.service.dao.ResultRepository;
+import com.intern.core.service.dao.SemesterRepository;
 import com.intern.core.service.dao.StudentEvaluationRepository;
 import com.intern.core.service.dao.StudentRepository;
 import com.intern.core.service.dto.ApplicationRequest;
@@ -48,11 +50,13 @@ import com.intern.core.service.entity.CriteriaEntity;
 import com.intern.core.service.entity.EvaluationEntity;
 import com.intern.core.service.entity.QuestionEntity;
 import com.intern.core.service.entity.ResultEntity;
+import com.intern.core.service.entity.SemesterEntity;
 import com.intern.core.service.entity.StudentEvaluationEntity;
 import com.intern.core.service.utility.BaseUtility;
 import com.intern.core.service.utility.DateUtility;
 import com.intern.core.service.entity.StudentEntity;
 import com.intern.core.service.dto.StudentResponse;
+import com.intern.core.service.dto.StudentResultResponse;
 
 @Service
 public class CoreServiceImpl implements CoreService {
@@ -82,6 +86,9 @@ public class CoreServiceImpl implements CoreService {
 	ResultRepository resultRepository;
 	
 	@Autowired
+	SemesterRepository semesterRepository;
+	
+	@Autowired
 	JavaMailSender javaMailSender;
 
 	@Override
@@ -95,6 +102,7 @@ public class CoreServiceImpl implements CoreService {
 			evaluationResponse.setEvaluationId(evaluationEntity.getEvaluationId());
 			evaluationResponse.setEvaluationName(evaluationEntity.getEvaluationName());
 			evaluationResponse.setEvaluationCategory(evaluationEntity.getEvaluationCategory());
+			evaluationResponse.setEvaluationPart(evaluationEntity.getEvaluationPart());
 			evaluationResponse.setEvaluationSubject(evaluationEntity.getEvaluationSubject());
 			
 			evaluationResponses.add(evaluationResponse);
@@ -114,6 +122,7 @@ public class CoreServiceImpl implements CoreService {
 			evaluationResponse.setEvaluationId(evaluationEntity.getEvaluationId());
 			evaluationResponse.setEvaluationName(evaluationEntity.getEvaluationName());
 			evaluationResponse.setEvaluationCategory(evaluationEntity.getEvaluationCategory());
+			evaluationResponse.setEvaluationPart(evaluationEntity.getEvaluationPart());
 			evaluationResponse.setEvaluationSubject(evaluationEntity.getEvaluationSubject());
 			
 			Boolean addRow = true;
@@ -122,6 +131,9 @@ public class CoreServiceImpl implements CoreService {
 				addRow = false;
 			}
 			if (BaseUtility.isNotBlank(evaluationRequest.getEvaluationSubject()) && !evaluationRequest.getEvaluationSubject().equals(evaluationEntity.getEvaluationSubject())) {
+				addRow = false;
+			}
+			if (BaseUtility.isNotBlank(evaluationRequest.getEvaluationPart()) && !evaluationRequest.getEvaluationPart().equals(evaluationEntity.getEvaluationPart())) {
 				addRow = false;
 			}
 			if (BaseUtility.isNotBlank(evaluationRequest.getStudentMatricNum())) {
@@ -148,6 +160,7 @@ public class CoreServiceImpl implements CoreService {
 			evaluationResponse.setEvaluationId(evaluationEntity.getEvaluationId());
 			evaluationResponse.setEvaluationName(evaluationEntity.getEvaluationName());
 			evaluationResponse.setEvaluationCategory(evaluationEntity.getEvaluationCategory());
+			evaluationResponse.setEvaluationPart(evaluationEntity.getEvaluationPart());
 			evaluationResponse.setEvaluationSubject(evaluationEntity.getEvaluationSubject());
 		
 			return evaluationResponse;
@@ -164,6 +177,7 @@ public class CoreServiceImpl implements CoreService {
 		newEvaluationEntity.setEvaluationId(BaseUtility.generateId());
 		newEvaluationEntity.setEvaluationName(evaluationRequest.getEvaluationName());
 		newEvaluationEntity.setEvaluationCategory(evaluationRequest.getEvaluationCategory());
+		newEvaluationEntity.setEvaluationPart(evaluationRequest.getEvaluationPart());
 		newEvaluationEntity.setEvaluationSubject(evaluationRequest.getEvaluationSubject());
 		
 		EvaluationEntity insertedEvaluationEntity = evaluationRepository.save(newEvaluationEntity);
@@ -172,6 +186,7 @@ public class CoreServiceImpl implements CoreService {
 			evaluationResponse.setEvaluationId(insertedEvaluationEntity.getEvaluationId());
 			evaluationResponse.setEvaluationName(insertedEvaluationEntity.getEvaluationName());
 			evaluationResponse.setEvaluationCategory(insertedEvaluationEntity.getEvaluationCategory());
+			evaluationResponse.setEvaluationPart(insertedEvaluationEntity.getEvaluationPart());
 			evaluationResponse.setEvaluationSubject(insertedEvaluationEntity.getEvaluationSubject());
 		} else {
 			throw new Exception();
@@ -188,6 +203,7 @@ public class CoreServiceImpl implements CoreService {
 		if (BaseUtility.isObjectNotNull(existedEvaluationEntity)) {
 			existedEvaluationEntity.setEvaluationName(evaluationRequest.getEvaluationName());
 			existedEvaluationEntity.setEvaluationCategory(evaluationRequest.getEvaluationCategory());
+			existedEvaluationEntity.setEvaluationPart(evaluationRequest.getEvaluationPart());
 			existedEvaluationEntity.setEvaluationSubject(evaluationRequest.getEvaluationSubject());
 			
 			EvaluationEntity updatedEvaluationEntity = evaluationRepository.save(existedEvaluationEntity);
@@ -196,6 +212,7 @@ public class CoreServiceImpl implements CoreService {
 				evaluationResponse.setEvaluationId(updatedEvaluationEntity.getEvaluationId());
 				evaluationResponse.setEvaluationName(updatedEvaluationEntity.getEvaluationName());
 				evaluationResponse.setEvaluationCategory(updatedEvaluationEntity.getEvaluationCategory());
+				evaluationResponse.setEvaluationPart(updatedEvaluationEntity.getEvaluationPart());
 				evaluationResponse.setEvaluationSubject(updatedEvaluationEntity.getEvaluationSubject());
 			} else {
 				throw new Exception();
@@ -526,6 +543,72 @@ public class CoreServiceImpl implements CoreService {
 		
 		return false;
 	}
+
+	@Override
+	public List<StudentResultResponse> getStudentsResults() {
+		List<StudentResultResponse> studentResultResponses = new ArrayList<StudentResultResponse>();
+		List<StudentEntity> existedStudentEntities = studentRepository.findAll();
+		
+		if (!BaseUtility.isListNull(existedStudentEntities)) {
+			for (StudentEntity studentEntity : existedStudentEntities) {
+				List<StudentEvaluationEntity> studentEvaluationEntities = studentEvaluationRepository.findByStudentMatricNum(studentEntity.getStudentMatricNum());
+				
+				Float totalCST656 = 0.0f;
+				Float totalCST666 = 0.0f;
+				String evaluationStatus = "CMP";
+				if (!BaseUtility.isListNull(studentEvaluationEntities)) {
+					for (StudentEvaluationEntity studentEvaluationEntity : studentEvaluationEntities) {
+						EvaluationEntity existedEvaluationEntity = evaluationRepository.findByEvaluationId(studentEvaluationEntity.getEvaluationId());
+						
+						if (!studentEvaluationEntity.getStudentEvaluationStatus().equals(evaluationStatus)) {
+							evaluationStatus = "INC";
+						}
+						
+						if (BaseUtility.isObjectNotNull(existedEvaluationEntity)) {
+							switch (existedEvaluationEntity.getEvaluationSubject()) {
+							case "CST656":
+								if (studentEvaluationEntity.getStudentEvaluationTotalScore() != null) {
+									totalCST656 = totalCST656 + studentEvaluationEntity.getStudentEvaluationTotalScore();
+								}
+								break;
+							case "CST666":
+								if (studentEvaluationEntity.getStudentEvaluationTotalScore() != null) {
+									totalCST666 = totalCST666 + studentEvaluationEntity.getStudentEvaluationTotalScore();
+								}
+								break;
+							}
+						}
+					}
+				}
+
+				StudentResultResponse studentResultResponse = new StudentResultResponse();
+				StudentResponse studentResponse = new StudentResponse();
+				
+				studentResponse.setStudentMatricNum(studentEntity.getStudentMatricNum());
+				studentResponse.setStudentName(studentEntity.getStudentName());
+				studentResponse.setStudentAddress(studentEntity.getStudentAddress());
+				studentResponse.setStudentEmail(studentEntity.getStudentEmail());
+				studentResponse.setStudentPhone(studentEntity.getStudentPhone());
+				studentResponse.setStudentPassword(studentEntity.getStudentPassword());
+				studentResponse.setStudentCampus(studentEntity.getStudentCampus());
+				studentResponse.setStudentCourse(studentEntity.getStudentCourse());
+				studentResponse.setStudentClass(studentEntity.getStudentClass());
+				
+				studentResultResponse.setStudent(studentResponse);
+				studentResultResponse.setStudentEvaluationsStatus(evaluationStatus);
+				studentResultResponse.setSubject1TotalMark(totalCST656);
+				studentResultResponse.setSubject1Grade(BaseUtility.getGrade(totalCST656));
+				studentResultResponse.setSubject1Pointer(BaseUtility.getPointer(totalCST656));
+				studentResultResponse.setSubject2TotalMark(totalCST666);
+				studentResultResponse.setSubject2Grade(BaseUtility.getGrade(totalCST666));
+				studentResultResponse.setSubject2Pointer(BaseUtility.getPointer(totalCST666));
+				
+				studentResultResponses.add(studentResultResponse);
+			}
+		}
+
+		return studentResultResponses;
+	}
 	
 	@Override
 	public List<StudentEvaluationResponse> filterStudentEvaluations(StudentEvaluationRequest studentEvaluationRequest) {
@@ -551,6 +634,7 @@ public class CoreServiceImpl implements CoreService {
 			studentEvaluationResponse.setStudentMatricNum(existedStudentEvaluationEntity.getStudentMatricNum());
 			studentEvaluationResponse.setAcademicSvId(existedStudentEvaluationEntity.getAcademicSvId());
 			studentEvaluationResponse.setIndustrySvId(existedStudentEvaluationEntity.getIndustrySvId());
+			studentEvaluationResponse.setSemesterId(existedStudentEvaluationEntity.getSemesterId());
 			
 			if (BaseUtility.isNotBlank(existedStudentEvaluationEntity.getEvaluationId())) {
 				EvaluationEntity existedEvaluationEntity = evaluationRepository.findByEvaluationId(existedStudentEvaluationEntity.getEvaluationId());
@@ -564,6 +648,25 @@ public class CoreServiceImpl implements CoreService {
 					evaluationResponse.setEvaluationSubject(existedEvaluationEntity.getEvaluationSubject());
 					
 					studentEvaluationResponse.setEvaluation(evaluationResponse);
+				}
+			}
+			
+			if (BaseUtility.isNotBlank(existedStudentEvaluationEntity.getSemesterId())) {
+				SemesterEntity existedSemesterEntity = semesterRepository.findBySemesterId(existedStudentEvaluationEntity.getSemesterId());
+				
+				if (BaseUtility.isObjectNotNull(existedSemesterEntity)) {
+					SemesterResponse semesterResponse = new SemesterResponse();
+					
+					semesterResponse.setSemesterId(existedSemesterEntity.getSemesterId());
+					semesterResponse.setSemesterCode(existedSemesterEntity.getSemesterCode());
+					semesterResponse.setSemesterPart(existedSemesterEntity.getSemesterPart());
+					semesterResponse.setSemesterStatus(existedSemesterEntity.getSemesterStatus());
+//					semesterResponse.setSemesterStartDate(DateUtility.convertToLocalDateTime(existedSemesterEntity.getSemesterStartDate()));
+//					semesterResponse.setSemesterEndDate(DateUtility.convertToLocalDateTime(existedSemesterEntity.getSemesterEndDate()));
+					semesterResponse.setSemesterStartEvaluateDate(DateUtility.convertToLocalDateTime(existedSemesterEntity.getSemesterStartEvaluateDate()));
+					semesterResponse.setSemesterEndEvaluateDate(DateUtility.convertToLocalDateTime(existedSemesterEntity.getSemesterEndEvaluateDate()));
+					
+					studentEvaluationResponse.setSemester(semesterResponse);
 				}
 			}
 			
@@ -587,6 +690,78 @@ public class CoreServiceImpl implements CoreService {
 			
 			if (addRow) {
 				studentEvaluationResponses.add(studentEvaluationResponse);
+			}
+		}
+		
+		return studentEvaluationResponses;
+	}
+
+	@Override
+	public List<StudentEvaluationResponse> insertStudentEvaluations(String studentMatricNum) throws Exception {
+		List<StudentEvaluationResponse> studentEvaluationResponses = new ArrayList<StudentEvaluationResponse>();
+		List<EvaluationEntity> existedEvaluationEntities = evaluationRepository.findAll();
+		
+		if (existedEvaluationEntities.size() > 0) {
+			for (EvaluationEntity evaluationEntity : existedEvaluationEntities) {
+				StudentEvaluationEntity existedStudentEvaluationEntity = studentEvaluationRepository.findByEvaluationIdAndStudentMatricNum(evaluationEntity.getEvaluationId(), studentMatricNum);
+				
+				if (BaseUtility.isObjectNull(existedStudentEvaluationEntity)) {
+					StudentEvaluationEntity newStudentEvaluationEntity = new StudentEvaluationEntity();
+					
+					newStudentEvaluationEntity.setStudentEvaluationId(BaseUtility.generateId());
+					newStudentEvaluationEntity.setStudentEvaluationStatus("INC");
+					newStudentEvaluationEntity.setEvaluationId(evaluationEntity.getEvaluationId());
+					newStudentEvaluationEntity.setStudentMatricNum(studentMatricNum);
+					
+					List<SemesterEntity> existedSemesterEntities = semesterRepository.findBySemesterPartAndSemesterStatus(evaluationEntity.getEvaluationPart(), "ACT");
+					if (!BaseUtility.isListNull(existedEvaluationEntities)) {
+						SemesterEntity existedSemesterEntity = existedSemesterEntities.get(0);
+						
+						if (BaseUtility.isObjectNotNull(existedSemesterEntity)) {
+							newStudentEvaluationEntity.setSemesterId(existedSemesterEntity.getSemesterId());
+						}
+					}
+					
+					StudentEvaluationEntity insertedEvaluationEntity = studentEvaluationRepository.save(newStudentEvaluationEntity);
+					
+					if (BaseUtility.isObjectNotNull(insertedEvaluationEntity)) {
+						StudentEvaluationResponse studentEvaluationResponse = new StudentEvaluationResponse();
+						
+						studentEvaluationResponse.setStudentEvaluationId(insertedEvaluationEntity.getStudentEvaluationId());
+						studentEvaluationResponse.setStudentEvaluationDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationDate()));
+						studentEvaluationResponse.setStudentEvaluationStartDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationStartDate()));
+						studentEvaluationResponse.setStudentEvaluationEndDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationEndDate()));
+						studentEvaluationResponse.setStudentEvaluationStatus(insertedEvaluationEntity.getStudentEvaluationStatus());
+						
+						studentEvaluationResponse.setStudentEvaluationAttachFileName(insertedEvaluationEntity.getStudentEvaluationAttachFileName());
+						studentEvaluationResponse.setStudentEvaluationAttach(insertedEvaluationEntity.getStudentEvaluationAttach());
+						studentEvaluationResponse.setStudentEvaluationAttachDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationAttachDate()));
+	
+						studentEvaluationResponse.setStudentEvaluationComment(insertedEvaluationEntity.getStudentEvaluationComment());
+						studentEvaluationResponse.setStudentEvaluationTotalScore(insertedEvaluationEntity.getStudentEvaluationTotalScore());
+						studentEvaluationResponse.setEvaluationId(insertedEvaluationEntity.getEvaluationId());
+						studentEvaluationResponse.setStudentMatricNum(insertedEvaluationEntity.getStudentMatricNum());
+						studentEvaluationResponse.setAcademicSvId(insertedEvaluationEntity.getAcademicSvId());
+						studentEvaluationResponse.setIndustrySvId(insertedEvaluationEntity.getIndustrySvId());
+						
+						if (BaseUtility.isNotBlank(insertedEvaluationEntity.getEvaluationId())) {
+							EvaluationEntity existedEvaluationEntity = evaluationRepository.findByEvaluationId(insertedEvaluationEntity.getEvaluationId());
+							
+							if (BaseUtility.isObjectNotNull(existedEvaluationEntity)) {
+								EvaluationResponse evaluationResponse = new EvaluationResponse();
+								
+								evaluationResponse.setEvaluationId(existedEvaluationEntity.getEvaluationId());
+								evaluationResponse.setEvaluationName(existedEvaluationEntity.getEvaluationName());
+								evaluationResponse.setEvaluationCategory(existedEvaluationEntity.getEvaluationCategory());
+								evaluationResponse.setEvaluationSubject(existedEvaluationEntity.getEvaluationSubject());
+								
+								studentEvaluationResponse.setEvaluation(evaluationResponse);
+							}
+						}
+						
+						studentEvaluationResponses.add(studentEvaluationResponse);
+					}
+				}
 			}
 		}
 		
@@ -1163,38 +1338,42 @@ public class CoreServiceImpl implements CoreService {
 				if (existedStudentEvaluationEntities.size() > 0) {
 					for (StudentEvaluationEntity studentEvaluationEntity : existedStudentEvaluationEntities) {
 						
-						EvaluationEntity existedEvaluationEntity = evaluationRepository.findByEvaluationId(studentEvaluationEntity.getEvaluationId());
-						if (BaseUtility.isObjectNotNull(existedEvaluationEntity)) {
-							Date currentDate = new Date();
-							if (currentDate.after(studentEvaluationEntity.getStudentEvaluationStartDate()) && currentDate.before(studentEvaluationEntity.getStudentEvaluationEndDate())) {
-								StudentResponse studentResponse = new StudentResponse();
-								
-								studentResponse.setStudentMatricNum(studentEntity.getStudentMatricNum());
-								studentResponse.setStudentName(studentEntity.getStudentName());
-								studentResponse.setStudentAddress(studentEntity.getStudentAddress());
-								studentResponse.setStudentEmail(studentEntity.getStudentEmail());
-								studentResponse.setStudentPhone(studentEntity.getStudentPhone());
-								studentResponse.setStudentPassword(studentEntity.getStudentPassword());
-								studentResponse.setStudentCampus(studentEntity.getStudentCampus());
-								studentResponse.setStudentCourse(studentEntity.getStudentCourse());
-								studentResponse.setStudentClass(studentEntity.getStudentClass());
-								studentResponse.setStudentProject(studentEntity.getStudentProject());
-								studentResponse.setStudentCV(studentEntity.getStudentCV());
-								studentResponse.setStudentCVFileName(studentEntity.getStudentCVFileName());
-								studentResponse.setStudentMiniTranscript(studentEntity.getStudentMiniTranscript());
-								studentResponse.setStudentMiniTranscriptFileName(studentEntity.getStudentMiniTranscriptFileName());
-								studentResponse.setStudentCoverLetter(studentEntity.getStudentCoverLetter());
-								studentResponse.setStudentCoverLetterFileName(studentEntity.getStudentCoverLetterFileName());
-								studentResponse.setStudentCourseOutline(studentEntity.getStudentCourseOutline());
-								studentResponse.setStudentCourseOutlineFileName(studentEntity.getStudentCourseOutlineFileName());
-								studentResponse.setStudentSL(studentEntity.getStudentSL());
-								studentResponse.setStudentSLFileName(studentEntity.getStudentSLFileName());
-								studentResponse.setIndustrySvId(studentEntity.getIndustrySvId());
-								studentResponse.setAcademicSvId(studentEntity.getAcademicSvId());
-								studentResponse.setCoordinatorId(studentEntity.getCoordinatorId());
-								
-								if (userType.equals(existedEvaluationEntity.getEvaluationCategory())) {
-									studentEvaluationStarted.add(studentResponse);
+						if (BaseUtility.isNotBlank(studentEvaluationEntity.getEvaluationId()) && BaseUtility.isNotBlank(studentEvaluationEntity.getSemesterId())) {
+							EvaluationEntity existedEvaluationEntity = evaluationRepository.findByEvaluationId(studentEvaluationEntity.getEvaluationId());
+							SemesterEntity existedSemesterEntity = semesterRepository.findBySemesterId(studentEvaluationEntity.getSemesterId());
+							
+							if (BaseUtility.isObjectNotNull(existedEvaluationEntity) && BaseUtility.isObjectNotNull(existedSemesterEntity)) {
+								Date currentDate = new Date();
+								if (currentDate.after(existedSemesterEntity.getSemesterStartEvaluateDate()) && currentDate.before(existedSemesterEntity.getSemesterEndEvaluateDate())) {
+									StudentResponse studentResponse = new StudentResponse();
+									
+									studentResponse.setStudentMatricNum(studentEntity.getStudentMatricNum());
+									studentResponse.setStudentName(studentEntity.getStudentName());
+									studentResponse.setStudentAddress(studentEntity.getStudentAddress());
+									studentResponse.setStudentEmail(studentEntity.getStudentEmail());
+									studentResponse.setStudentPhone(studentEntity.getStudentPhone());
+									studentResponse.setStudentPassword(studentEntity.getStudentPassword());
+									studentResponse.setStudentCampus(studentEntity.getStudentCampus());
+									studentResponse.setStudentCourse(studentEntity.getStudentCourse());
+									studentResponse.setStudentClass(studentEntity.getStudentClass());
+									studentResponse.setStudentProject(studentEntity.getStudentProject());
+									studentResponse.setStudentCV(studentEntity.getStudentCV());
+									studentResponse.setStudentCVFileName(studentEntity.getStudentCVFileName());
+									studentResponse.setStudentMiniTranscript(studentEntity.getStudentMiniTranscript());
+									studentResponse.setStudentMiniTranscriptFileName(studentEntity.getStudentMiniTranscriptFileName());
+									studentResponse.setStudentCoverLetter(studentEntity.getStudentCoverLetter());
+									studentResponse.setStudentCoverLetterFileName(studentEntity.getStudentCoverLetterFileName());
+									studentResponse.setStudentCourseOutline(studentEntity.getStudentCourseOutline());
+									studentResponse.setStudentCourseOutlineFileName(studentEntity.getStudentCourseOutlineFileName());
+									studentResponse.setStudentSL(studentEntity.getStudentSL());
+									studentResponse.setStudentSLFileName(studentEntity.getStudentSLFileName());
+									studentResponse.setIndustrySvId(studentEntity.getIndustrySvId());
+									studentResponse.setAcademicSvId(studentEntity.getAcademicSvId());
+									studentResponse.setCoordinatorId(studentEntity.getCoordinatorId());
+									
+									if (userType.equals(existedEvaluationEntity.getEvaluationCategory())) {
+										studentEvaluationStarted.add(studentResponse);
+									}
 								}
 							}
 						}

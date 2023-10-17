@@ -17,6 +17,7 @@ import com.intern.core.service.dto.ResultResponse;
 import com.intern.core.service.dto.StudentEvaluationRequest;
 import com.intern.core.service.dto.StudentEvaluationResponse;
 import com.intern.core.service.dto.StudentResponse;
+import com.intern.core.service.dto.StudentResultResponse;
 
 public interface CoreService {
 	
@@ -46,7 +47,11 @@ public interface CoreService {
 	
 	Boolean deleteApplicationByApplicationId(String applicationId);
 	
+	List<StudentResultResponse> getStudentsResults();
+	
 	List<StudentEvaluationResponse> filterStudentEvaluations(StudentEvaluationRequest studentEvaluationRequest);
+	
+	List<StudentEvaluationResponse> insertStudentEvaluations(String studentMatricNum) throws Exception;
 	
 	StudentEvaluationResponse insertStudentEvaluation(StudentEvaluationRequest studentEvaluationRequest, MultipartFile attachFile) throws Exception;
 	

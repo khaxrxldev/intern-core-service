@@ -8,6 +8,8 @@ public class EvaluationRequest {
 
 	private String evaluationCategory;
 
+	private String evaluationPart;
+
 	private String evaluationSubject;
 	
 	private String studentMatricNum;
@@ -34,6 +36,14 @@ public class EvaluationRequest {
 
 	public void setEvaluationCategory(String evaluationCategory) {
 		this.evaluationCategory = evaluationCategory;
+	}
+
+	public String getEvaluationPart() {
+		return evaluationPart;
+	}
+
+	public void setEvaluationPart(String evaluationPart) {
+		this.evaluationPart = evaluationPart;
 	}
 
 	public String getEvaluationSubject() {

@@ -38,6 +38,10 @@ public class StudentEvaluationRequest {
 
 	private String industrySvId;
 	
+	private String semesterId;
+	
+	private SemesterResponse semester;
+	
 	private String userLoginType;
 
 	public String getStudentEvaluationId() {
@@ -150,6 +154,22 @@ public class StudentEvaluationRequest {
 
 	public void setIndustrySvId(String industrySvId) {
 		this.industrySvId = industrySvId;
+	}
+
+	public String getSemesterId() {
+		return semesterId;
+	}
+
+	public void setSemesterId(String semesterId) {
+		this.semesterId = semesterId;
+	}
+
+	public SemesterResponse getSemester() {
+		return semester;
+	}
+
+	public void setSemester(SemesterResponse semester) {
+		this.semester = semester;
 	}
 
 	public String getUserLoginType() {

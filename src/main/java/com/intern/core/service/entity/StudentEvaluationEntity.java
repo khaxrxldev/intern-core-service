@@ -58,6 +58,9 @@ public class StudentEvaluationEntity implements Serializable {
 	@Column(name = "industry_sv_id")
 	private String industrySvId;
 
+	@Column(name = "semester_id")
+	private String semesterId;
+
 	public String getStudentEvaluationId() {
 		return studentEvaluationId;
 	}
@@ -168,5 +171,13 @@ public class StudentEvaluationEntity implements Serializable {
 
 	public void setIndustrySvId(String industrySvId) {
 		this.industrySvId = industrySvId;
+	}
+
+	public String getSemesterId() {
+		return semesterId;
+	}
+
+	public void setSemesterId(String semesterId) {
+		this.semesterId = semesterId;
 	}
 }

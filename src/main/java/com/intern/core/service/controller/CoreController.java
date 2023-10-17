@@ -36,6 +36,7 @@ import com.intern.core.service.dto.ResultResponse;
 import com.intern.core.service.dto.StudentEvaluationRequest;
 import com.intern.core.service.dto.StudentEvaluationResponse;
 import com.intern.core.service.dto.StudentResponse;
+import com.intern.core.service.dto.StudentResultResponse;
 import com.intern.core.service.utility.BaseUtility;
 
 @RestController
@@ -387,6 +388,22 @@ public class CoreController {
 		return returnResponse(null, http_status, error_desc, message_status, message_desc, message_code, message_dev, object_map);
 	}
 	
+	@GetMapping("/students/evaluations/results")
+	public ResponseEntity<Response> getStudentsResults() throws Exception {
+		HttpStatus http_status = HttpStatus.OK;
+		String error_desc = null;
+		Boolean message_status = false;
+		String message_desc = null;
+		String message_code = null;
+		String message_dev = null;
+		Map<Object, Object> object_map = new HashMap<Object, Object>();
+		
+		List<StudentResultResponse> studentResultResponses = coreService.getStudentsResults();
+		object_map.put("studentResults", studentResultResponses);
+		
+		return returnResponse(null, http_status, error_desc, message_status, message_desc, message_code, message_dev, object_map);
+	}
+	
 	@PostMapping("/students/evaluations/filter")
 	public ResponseEntity<Response> filterStudentEvaluations(@RequestPart("studentEvaluationRequest") StudentEvaluationRequest studentEvaluationRequest) throws Exception {
 		HttpStatus http_status = HttpStatus.OK;
@@ -399,6 +416,35 @@ public class CoreController {
 		
 		List<StudentEvaluationResponse> studentEvaluationResponses = coreService.filterStudentEvaluations(studentEvaluationRequest);
 		object_map.put("studentEvaluations", studentEvaluationResponses);
+		
+		return returnResponse(null, http_status, error_desc, message_status, message_desc, message_code, message_dev, object_map);
+	}
+	
+	@PostMapping("/students/evaluations")
+	public ResponseEntity<Response> insertStudentEvaluations(@RequestPart("studentMatricNum") String studentMatricNum) throws Exception {
+		HttpStatus http_status = HttpStatus.OK;
+		String error_desc = null;
+		Boolean message_status = false;
+		String message_desc = null;
+		String message_code = null;
+		String message_dev = null;
+		Map<Object, Object> object_map = new HashMap<Object, Object>();
+		
+		if (BaseUtility.isNotBlank(studentMatricNum)) {
+			List<StudentEvaluationResponse> studentEvaluationResponses = coreService.insertStudentEvaluations(studentMatricNum);
+			
+			if (!BaseUtility.isListNull(studentEvaluationResponses)) {
+				message_status = true;
+				message_desc = "SUCCESS";
+				
+				object_map.put("studentEvaluations", studentEvaluationResponses);
+			} else {
+				error_desc = "FAIL";
+			}
+		} else {
+			http_status = HttpStatus.BAD_REQUEST;
+			error_desc = "FAIL";
+		}
 		
 		return returnResponse(null, http_status, error_desc, message_status, message_desc, message_code, message_dev, object_map);
 	}

@@ -103,4 +103,76 @@ public class BaseUtility {
             return 0;
         }
     }
+    
+    public static String getGrade(Float totalMark) {
+    	if (totalMark != null) {
+    		if (totalMark >= 0 && totalMark <= 29) {
+				return "F";
+			} else if (totalMark >= 30 && totalMark <= 39) {
+				return "E";
+			} else if (totalMark >= 40 && totalMark <= 43) {
+				return "D";
+			} else if (totalMark >= 44 && totalMark <= 46) {
+				return "D+";
+			} else if (totalMark >= 47 && totalMark <= 49) {
+				return "C-";
+			} else if (totalMark >= 50 && totalMark <= 54) {
+				return "C";
+			} else if (totalMark >= 55 && totalMark <= 59) {
+				return "C+";
+			} else if (totalMark >= 60 && totalMark <= 64) {
+				return "B-";
+			} else if (totalMark >= 65 && totalMark <= 69) {
+				return "B";
+			} else if (totalMark >= 70 && totalMark <= 74) {
+				return "B+";
+			} else if (totalMark >= 75 && totalMark <= 79) {
+				return "A-";
+			} else if (totalMark >= 80 && totalMark <= 89) {
+				return "A";
+			} else if (totalMark >= 90 && totalMark <= 100) {
+				return "A+";
+			} else {
+				return "";
+			}
+		} else {
+	    	return "";
+		}
+    }
+    
+    public static String getPointer(Float totalMark) {
+    	if (totalMark != null) {
+    		if (totalMark >= 0 && totalMark <= 29) {
+				return "0.00";
+			} else if (totalMark >= 30 && totalMark <= 39) {
+				return "0.67";
+			} else if (totalMark >= 40 && totalMark <= 43) {
+				return "1.00";
+			} else if (totalMark >= 44 && totalMark <= 46) {
+				return "1.33";
+			} else if (totalMark >= 47 && totalMark <= 49) {
+				return "1.67";
+			} else if (totalMark >= 50 && totalMark <= 54) {
+				return "2.00";
+			} else if (totalMark >= 55 && totalMark <= 59) {
+				return "2.33";
+			} else if (totalMark >= 60 && totalMark <= 64) {
+				return "2.67";
+			} else if (totalMark >= 65 && totalMark <= 69) {
+				return "3.00";
+			} else if (totalMark >= 70 && totalMark <= 74) {
+				return "3.33";
+			} else if (totalMark >= 75 && totalMark <= 79) {
+				return "3.67";
+			} else if (totalMark >= 80 && totalMark <= 89) {
+				return "4.00";
+			} else if (totalMark >= 90 && totalMark <= 100) {
+				return "4.00";
+			} else {
+				return "";
+			}
+		} else {
+	    	return "";
+		}
+    }
 }

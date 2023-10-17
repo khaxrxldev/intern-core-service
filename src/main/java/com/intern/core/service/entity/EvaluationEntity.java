@@ -22,6 +22,9 @@ public class EvaluationEntity implements Serializable {
 	@Column(name = "evaluation_category")
 	private String evaluationCategory;
 
+	@Column(name = "evaluation_part")
+	private String evaluationPart;
+
 	@Column(name = "evaluation_subject")
 	private String evaluationSubject;
 
@@ -47,6 +50,14 @@ public class EvaluationEntity implements Serializable {
 
 	public void setEvaluationCategory(String evaluationCategory) {
 		this.evaluationCategory = evaluationCategory;
+	}
+
+	public String getEvaluationPart() {
+		return evaluationPart;
+	}
+
+	public void setEvaluationPart(String evaluationPart) {
+		this.evaluationPart = evaluationPart;
 	}
 
 	public String getEvaluationSubject() {

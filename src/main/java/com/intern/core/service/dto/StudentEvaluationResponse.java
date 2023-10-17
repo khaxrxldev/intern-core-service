@@ -39,6 +39,10 @@ public class StudentEvaluationResponse {
 	private String academicSvId;
 
 	private String industrySvId;
+	
+	private String semesterId;
+	
+	private SemesterResponse semester;
 
 	public String getStudentEvaluationId() {
 		return studentEvaluationId;
@@ -158,5 +162,21 @@ public class StudentEvaluationResponse {
 
 	public void setIndustrySvId(String industrySvId) {
 		this.industrySvId = industrySvId;
+	}
+
+	public String getSemesterId() {
+		return semesterId;
+	}
+
+	public void setSemesterId(String semesterId) {
+		this.semesterId = semesterId;
+	}
+
+	public SemesterResponse getSemester() {
+		return semester;
+	}
+
+	public void setSemester(SemesterResponse semester) {
+		this.semester = semester;
 	}
 }

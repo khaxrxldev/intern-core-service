@@ -1,7 +1,5 @@
 package com.intern.core.service.dto;
 
-import java.util.List;
-
 public class StudentResponse {
 
 	private String studentMatricNum;
@@ -50,8 +48,6 @@ public class StudentResponse {
 
 	private String coordinatorId;
 	
-	private List<String> evaluationIds;
-
 	public String getStudentMatricNum() {
 		return studentMatricNum;
 	}
@@ -234,13 +230,5 @@ public class StudentResponse {
 
 	public void setCoordinatorId(String coordinatorId) {
 		this.coordinatorId = coordinatorId;
-	}
-
-	public List<String> getEvaluationIds() {
-		return evaluationIds;
-	}
-
-	public void setEvaluationIds(List<String> evaluationIds) {
-		this.evaluationIds = evaluationIds;
 	}
 }

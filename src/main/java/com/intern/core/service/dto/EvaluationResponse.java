@@ -8,6 +8,8 @@ public class EvaluationResponse {
 
 	private String evaluationCategory;
 
+	private String evaluationPart;
+
 	private String evaluationSubject;
 
 	public String getEvaluationId() {
@@ -32,6 +34,14 @@ public class EvaluationResponse {
 
 	public void setEvaluationCategory(String evaluationCategory) {
 		this.evaluationCategory = evaluationCategory;
+	}
+
+	public String getEvaluationPart() {
+		return evaluationPart;
+	}
+
+	public void setEvaluationPart(String evaluationPart) {
+		this.evaluationPart = evaluationPart;
 	}
 
 	public String getEvaluationSubject() {
