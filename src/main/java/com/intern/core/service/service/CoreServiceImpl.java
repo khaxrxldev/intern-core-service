@@ -42,6 +42,7 @@ import com.intern.core.service.dto.EvaluationResponse;
 import com.intern.core.service.dto.QuestionResponse;
 import com.intern.core.service.dto.ResultRequest;
 import com.intern.core.service.dto.ResultResponse;
+import com.intern.core.service.dto.SemesterRequest;
 import com.intern.core.service.dto.StudentEvaluationRequest;
 import com.intern.core.service.dto.StudentEvaluationResponse;
 import com.intern.core.service.entity.ApplicationEntity;
@@ -697,70 +698,81 @@ public class CoreServiceImpl implements CoreService {
 	}
 
 	@Override
-	public List<StudentEvaluationResponse> insertStudentEvaluations(String studentMatricNum) throws Exception {
+	public List<StudentEvaluationResponse> insertStudentEvaluations(List<SemesterRequest> semesterRequests, String studentMatricNum) throws Exception {
 		List<StudentEvaluationResponse> studentEvaluationResponses = new ArrayList<StudentEvaluationResponse>();
 		List<EvaluationEntity> existedEvaluationEntities = evaluationRepository.findAll();
 		
 		if (existedEvaluationEntities.size() > 0) {
 			for (EvaluationEntity evaluationEntity : existedEvaluationEntities) {
 				StudentEvaluationEntity existedStudentEvaluationEntity = studentEvaluationRepository.findByEvaluationIdAndStudentMatricNum(evaluationEntity.getEvaluationId(), studentMatricNum);
-				
+
+				StudentEvaluationEntity studentEvaluationEntity = new StudentEvaluationEntity();
 				if (BaseUtility.isObjectNull(existedStudentEvaluationEntity)) {
-					StudentEvaluationEntity newStudentEvaluationEntity = new StudentEvaluationEntity();
-					
-					newStudentEvaluationEntity.setStudentEvaluationId(BaseUtility.generateId());
-					newStudentEvaluationEntity.setStudentEvaluationStatus("INC");
-					newStudentEvaluationEntity.setEvaluationId(evaluationEntity.getEvaluationId());
-					newStudentEvaluationEntity.setStudentMatricNum(studentMatricNum);
-					
-					List<SemesterEntity> existedSemesterEntities = semesterRepository.findBySemesterPartAndSemesterStatus(evaluationEntity.getEvaluationPart(), "ACT");
-					if (!BaseUtility.isListNull(existedEvaluationEntities)) {
-						SemesterEntity existedSemesterEntity = existedSemesterEntities.get(0);
-						
-						if (BaseUtility.isObjectNotNull(existedSemesterEntity)) {
-							newStudentEvaluationEntity.setSemesterId(existedSemesterEntity.getSemesterId());
-						}
+					studentEvaluationEntity.setStudentEvaluationId(BaseUtility.generateId());
+					studentEvaluationEntity.setStudentEvaluationStatus("INC");
+					studentEvaluationEntity.setEvaluationId(evaluationEntity.getEvaluationId());
+					studentEvaluationEntity.setStudentMatricNum(studentMatricNum);
+				} else {
+					studentEvaluationEntity.setStudentEvaluationId(existedStudentEvaluationEntity.getStudentEvaluationId());
+					studentEvaluationEntity.setStudentEvaluationDate(existedStudentEvaluationEntity.getStudentEvaluationDate());
+					studentEvaluationEntity.setStudentEvaluationStartDate(existedStudentEvaluationEntity.getStudentEvaluationStartDate());
+					studentEvaluationEntity.setStudentEvaluationEndDate(existedStudentEvaluationEntity.getStudentEvaluationEndDate());
+					studentEvaluationEntity.setStudentEvaluationStatus(existedStudentEvaluationEntity.getStudentEvaluationStatus());
+					studentEvaluationEntity.setStudentEvaluationAttachFileName(existedStudentEvaluationEntity.getStudentEvaluationAttachFileName());
+					studentEvaluationEntity.setStudentEvaluationAttach(existedStudentEvaluationEntity.getStudentEvaluationAttach());
+					studentEvaluationEntity.setStudentEvaluationAttachDate(existedStudentEvaluationEntity.getStudentEvaluationAttachDate());
+					studentEvaluationEntity.setStudentEvaluationComment(existedStudentEvaluationEntity.getStudentEvaluationComment());
+					studentEvaluationEntity.setStudentEvaluationTotalScore(existedStudentEvaluationEntity.getStudentEvaluationTotalScore());
+					studentEvaluationEntity.setEvaluationId(existedStudentEvaluationEntity.getEvaluationId());
+					studentEvaluationEntity.setStudentMatricNum(existedStudentEvaluationEntity.getStudentMatricNum());
+					studentEvaluationEntity.setAcademicSvId(existedStudentEvaluationEntity.getAcademicSvId());
+					studentEvaluationEntity.setIndustrySvId(existedStudentEvaluationEntity.getIndustrySvId());
+				}
+				
+				for (SemesterRequest semesterRequest : semesterRequests) {
+					if (semesterRequest.getSemesterPart().equals(evaluationEntity.getEvaluationPart())) {
+						studentEvaluationEntity.setSemesterId(semesterRequest.getSemesterId());
 					}
+				}
+				
+				StudentEvaluationEntity insertedEvaluationEntity = studentEvaluationRepository.save(studentEvaluationEntity);
+				
+				if (BaseUtility.isObjectNotNull(insertedEvaluationEntity)) {
+					StudentEvaluationResponse studentEvaluationResponse = new StudentEvaluationResponse();
 					
-					StudentEvaluationEntity insertedEvaluationEntity = studentEvaluationRepository.save(newStudentEvaluationEntity);
+					studentEvaluationResponse.setStudentEvaluationId(insertedEvaluationEntity.getStudentEvaluationId());
+					studentEvaluationResponse.setStudentEvaluationDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationDate()));
+					studentEvaluationResponse.setStudentEvaluationStartDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationStartDate()));
+					studentEvaluationResponse.setStudentEvaluationEndDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationEndDate()));
+					studentEvaluationResponse.setStudentEvaluationStatus(insertedEvaluationEntity.getStudentEvaluationStatus());
 					
-					if (BaseUtility.isObjectNotNull(insertedEvaluationEntity)) {
-						StudentEvaluationResponse studentEvaluationResponse = new StudentEvaluationResponse();
+					studentEvaluationResponse.setStudentEvaluationAttachFileName(insertedEvaluationEntity.getStudentEvaluationAttachFileName());
+					studentEvaluationResponse.setStudentEvaluationAttach(insertedEvaluationEntity.getStudentEvaluationAttach());
+					studentEvaluationResponse.setStudentEvaluationAttachDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationAttachDate()));
+
+					studentEvaluationResponse.setStudentEvaluationComment(insertedEvaluationEntity.getStudentEvaluationComment());
+					studentEvaluationResponse.setStudentEvaluationTotalScore(insertedEvaluationEntity.getStudentEvaluationTotalScore());
+					studentEvaluationResponse.setEvaluationId(insertedEvaluationEntity.getEvaluationId());
+					studentEvaluationResponse.setStudentMatricNum(insertedEvaluationEntity.getStudentMatricNum());
+					studentEvaluationResponse.setAcademicSvId(insertedEvaluationEntity.getAcademicSvId());
+					studentEvaluationResponse.setIndustrySvId(insertedEvaluationEntity.getIndustrySvId());
+					
+					if (BaseUtility.isNotBlank(insertedEvaluationEntity.getEvaluationId())) {
+						EvaluationEntity existedEvaluationEntity = evaluationRepository.findByEvaluationId(insertedEvaluationEntity.getEvaluationId());
 						
-						studentEvaluationResponse.setStudentEvaluationId(insertedEvaluationEntity.getStudentEvaluationId());
-						studentEvaluationResponse.setStudentEvaluationDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationDate()));
-						studentEvaluationResponse.setStudentEvaluationStartDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationStartDate()));
-						studentEvaluationResponse.setStudentEvaluationEndDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationEndDate()));
-						studentEvaluationResponse.setStudentEvaluationStatus(insertedEvaluationEntity.getStudentEvaluationStatus());
-						
-						studentEvaluationResponse.setStudentEvaluationAttachFileName(insertedEvaluationEntity.getStudentEvaluationAttachFileName());
-						studentEvaluationResponse.setStudentEvaluationAttach(insertedEvaluationEntity.getStudentEvaluationAttach());
-						studentEvaluationResponse.setStudentEvaluationAttachDate(DateUtility.convertToLocalDateTime(insertedEvaluationEntity.getStudentEvaluationAttachDate()));
-	
-						studentEvaluationResponse.setStudentEvaluationComment(insertedEvaluationEntity.getStudentEvaluationComment());
-						studentEvaluationResponse.setStudentEvaluationTotalScore(insertedEvaluationEntity.getStudentEvaluationTotalScore());
-						studentEvaluationResponse.setEvaluationId(insertedEvaluationEntity.getEvaluationId());
-						studentEvaluationResponse.setStudentMatricNum(insertedEvaluationEntity.getStudentMatricNum());
-						studentEvaluationResponse.setAcademicSvId(insertedEvaluationEntity.getAcademicSvId());
-						studentEvaluationResponse.setIndustrySvId(insertedEvaluationEntity.getIndustrySvId());
-						
-						if (BaseUtility.isNotBlank(insertedEvaluationEntity.getEvaluationId())) {
-							EvaluationEntity existedEvaluationEntity = evaluationRepository.findByEvaluationId(insertedEvaluationEntity.getEvaluationId());
+						if (BaseUtility.isObjectNotNull(existedEvaluationEntity)) {
+							EvaluationResponse evaluationResponse = new EvaluationResponse();
 							
-							if (BaseUtility.isObjectNotNull(existedEvaluationEntity)) {
-								EvaluationResponse evaluationResponse = new EvaluationResponse();
-								
-								evaluationResponse.setEvaluationId(existedEvaluationEntity.getEvaluationId());
-								evaluationResponse.setEvaluationName(existedEvaluationEntity.getEvaluationName());
-								evaluationResponse.setEvaluationCategory(existedEvaluationEntity.getEvaluationCategory());
-								evaluationResponse.setEvaluationSubject(existedEvaluationEntity.getEvaluationSubject());
-								
-								studentEvaluationResponse.setEvaluation(evaluationResponse);
-							}
+							evaluationResponse.setEvaluationId(existedEvaluationEntity.getEvaluationId());
+							evaluationResponse.setEvaluationName(existedEvaluationEntity.getEvaluationName());
+							evaluationResponse.setEvaluationCategory(existedEvaluationEntity.getEvaluationCategory());
+							evaluationResponse.setEvaluationSubject(existedEvaluationEntity.getEvaluationSubject());
+							
+							studentEvaluationResponse.setEvaluation(evaluationResponse);
 						}
-						
-						studentEvaluationResponses.add(studentEvaluationResponse);
 					}
+					
+					studentEvaluationResponses.add(studentEvaluationResponse);
 				}
 			}
 		}

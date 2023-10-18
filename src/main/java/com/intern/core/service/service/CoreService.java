@@ -14,6 +14,7 @@ import com.intern.core.service.dto.EvaluationRequest;
 import com.intern.core.service.dto.EvaluationResponse;
 import com.intern.core.service.dto.ResultRequest;
 import com.intern.core.service.dto.ResultResponse;
+import com.intern.core.service.dto.SemesterRequest;
 import com.intern.core.service.dto.StudentEvaluationRequest;
 import com.intern.core.service.dto.StudentEvaluationResponse;
 import com.intern.core.service.dto.StudentResponse;
@@ -51,7 +52,7 @@ public interface CoreService {
 	
 	List<StudentEvaluationResponse> filterStudentEvaluations(StudentEvaluationRequest studentEvaluationRequest);
 	
-	List<StudentEvaluationResponse> insertStudentEvaluations(String studentMatricNum) throws Exception;
+	List<StudentEvaluationResponse> insertStudentEvaluations(List<SemesterRequest> semesterRequests, String studentMatricNum) throws Exception;
 	
 	StudentEvaluationResponse insertStudentEvaluation(StudentEvaluationRequest studentEvaluationRequest, MultipartFile attachFile) throws Exception;
 	

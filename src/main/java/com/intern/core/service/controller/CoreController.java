@@ -33,6 +33,7 @@ import com.intern.core.service.dto.EvaluationResponse;
 import com.intern.core.service.dto.Response;
 import com.intern.core.service.dto.ResultRequest;
 import com.intern.core.service.dto.ResultResponse;
+import com.intern.core.service.dto.SemesterRequest;
 import com.intern.core.service.dto.StudentEvaluationRequest;
 import com.intern.core.service.dto.StudentEvaluationResponse;
 import com.intern.core.service.dto.StudentResponse;
@@ -421,7 +422,7 @@ public class CoreController {
 	}
 	
 	@PostMapping("/students/evaluations")
-	public ResponseEntity<Response> insertStudentEvaluations(@RequestPart("studentMatricNum") String studentMatricNum) throws Exception {
+	public ResponseEntity<Response> insertStudentEvaluations(@RequestPart("semesters") List<SemesterRequest> semesterRequests, @RequestPart("studentMatricNum") String studentMatricNum) throws Exception {
 		HttpStatus http_status = HttpStatus.OK;
 		String error_desc = null;
 		Boolean message_status = false;
@@ -431,7 +432,7 @@ public class CoreController {
 		Map<Object, Object> object_map = new HashMap<Object, Object>();
 		
 		if (BaseUtility.isNotBlank(studentMatricNum)) {
-			List<StudentEvaluationResponse> studentEvaluationResponses = coreService.insertStudentEvaluations(studentMatricNum);
+			List<StudentEvaluationResponse> studentEvaluationResponses = coreService.insertStudentEvaluations(semesterRequests, studentMatricNum);
 			
 			if (!BaseUtility.isListNull(studentEvaluationResponses)) {
 				message_status = true;
