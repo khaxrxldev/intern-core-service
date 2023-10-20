@@ -561,7 +561,7 @@ public class CoreServiceImpl implements CoreService {
 					for (StudentEvaluationEntity studentEvaluationEntity : studentEvaluationEntities) {
 						EvaluationEntity existedEvaluationEntity = evaluationRepository.findByEvaluationId(studentEvaluationEntity.getEvaluationId());
 						
-						if (!studentEvaluationEntity.getStudentEvaluationStatus().equals(evaluationStatus)) {
+						if (!studentEvaluationEntity.getStudentEvaluationStatus().equals("CMP")) {
 							evaluationStatus = "INC";
 						}
 						
@@ -580,6 +580,8 @@ public class CoreServiceImpl implements CoreService {
 							}
 						}
 					}
+				} else {
+					evaluationStatus = "";
 				}
 
 				StudentResultResponse studentResultResponse = new StudentResultResponse();
@@ -596,7 +598,7 @@ public class CoreServiceImpl implements CoreService {
 				studentResponse.setStudentClass(studentEntity.getStudentClass());
 				
 				studentResultResponse.setStudent(studentResponse);
-				studentResultResponse.setStudentEvaluationsStatus(evaluationStatus);
+				studentResultResponse.setStudentEvaluationsStatus((BaseUtility.isNotBlank(evaluationStatus) && !evaluationStatus.equals("INC")) ? "CMP" : "INC");
 				studentResultResponse.setSubject1TotalMark(totalCST656);
 				studentResultResponse.setSubject1Grade(BaseUtility.getGrade(totalCST656));
 				studentResultResponse.setSubject1Pointer(BaseUtility.getPointer(totalCST656));
