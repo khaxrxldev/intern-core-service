@@ -2,7 +2,23 @@ package com.intern.core.service.dto;
 
 public class StudentResultResponse {
 
-	private StudentResponse student;
+	private String studentMatricNum;
+
+	private String studentName;
+
+	private String studentAddress;
+
+	private String studentEmail;
+
+	private String studentPhone;
+
+	private String studentPassword;
+
+	private String studentCampus;
+
+	private String studentCourse;
+
+	private String studentClass;
 	
 	private String studentEvaluationsStatus;
 	
@@ -18,12 +34,76 @@ public class StudentResultResponse {
 	
 	private String subject2Pointer;
 
-	public StudentResponse getStudent() {
-		return student;
+	public String getStudentMatricNum() {
+		return studentMatricNum;
 	}
 
-	public void setStudent(StudentResponse student) {
-		this.student = student;
+	public void setStudentMatricNum(String studentMatricNum) {
+		this.studentMatricNum = studentMatricNum;
+	}
+
+	public String getStudentName() {
+		return studentName;
+	}
+
+	public void setStudentName(String studentName) {
+		this.studentName = studentName;
+	}
+
+	public String getStudentAddress() {
+		return studentAddress;
+	}
+
+	public void setStudentAddress(String studentAddress) {
+		this.studentAddress = studentAddress;
+	}
+
+	public String getStudentEmail() {
+		return studentEmail;
+	}
+
+	public void setStudentEmail(String studentEmail) {
+		this.studentEmail = studentEmail;
+	}
+
+	public String getStudentPhone() {
+		return studentPhone;
+	}
+
+	public void setStudentPhone(String studentPhone) {
+		this.studentPhone = studentPhone;
+	}
+
+	public String getStudentPassword() {
+		return studentPassword;
+	}
+
+	public void setStudentPassword(String studentPassword) {
+		this.studentPassword = studentPassword;
+	}
+
+	public String getStudentCampus() {
+		return studentCampus;
+	}
+
+	public void setStudentCampus(String studentCampus) {
+		this.studentCampus = studentCampus;
+	}
+
+	public String getStudentCourse() {
+		return studentCourse;
+	}
+
+	public void setStudentCourse(String studentCourse) {
+		this.studentCourse = studentCourse;
+	}
+
+	public String getStudentClass() {
+		return studentClass;
+	}
+
+	public void setStudentClass(String studentClass) {
+		this.studentClass = studentClass;
 	}
 
 	public String getStudentEvaluationsStatus() {

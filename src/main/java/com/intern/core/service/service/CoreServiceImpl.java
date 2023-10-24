@@ -562,7 +562,7 @@ public class CoreServiceImpl implements CoreService {
 						EvaluationEntity existedEvaluationEntity = evaluationRepository.findByEvaluationId(studentEvaluationEntity.getEvaluationId());
 						
 						if (!studentEvaluationEntity.getStudentEvaluationStatus().equals("CMP")) {
-							evaluationStatus = "INC";
+							evaluationStatus = "PND";
 						}
 						
 						if (BaseUtility.isObjectNotNull(existedEvaluationEntity)) {
@@ -597,8 +597,16 @@ public class CoreServiceImpl implements CoreService {
 				studentResponse.setStudentCourse(studentEntity.getStudentCourse());
 				studentResponse.setStudentClass(studentEntity.getStudentClass());
 				
-				studentResultResponse.setStudent(studentResponse);
-				studentResultResponse.setStudentEvaluationsStatus((BaseUtility.isNotBlank(evaluationStatus) && !evaluationStatus.equals("INC")) ? "CMP" : "INC");
+				studentResultResponse.setStudentMatricNum(studentEntity.getStudentMatricNum());
+				studentResultResponse.setStudentName(studentEntity.getStudentName());
+				studentResultResponse.setStudentAddress(studentEntity.getStudentAddress());
+				studentResultResponse.setStudentEmail(studentEntity.getStudentEmail());
+				studentResultResponse.setStudentPhone(studentEntity.getStudentPhone());
+				studentResultResponse.setStudentPassword(studentEntity.getStudentPassword());
+				studentResultResponse.setStudentCampus(studentEntity.getStudentCampus());
+				studentResultResponse.setStudentCourse(studentEntity.getStudentCourse());
+				studentResultResponse.setStudentClass(studentEntity.getStudentClass());
+				studentResultResponse.setStudentEvaluationsStatus((BaseUtility.isNotBlank(evaluationStatus) && !evaluationStatus.equals("PND")) ? "CMP" : "PND");
 				studentResultResponse.setSubject1TotalMark(totalCST656);
 				studentResultResponse.setSubject1Grade(BaseUtility.getGrade(totalCST656));
 				studentResultResponse.setSubject1Pointer(BaseUtility.getPointer(totalCST656));
