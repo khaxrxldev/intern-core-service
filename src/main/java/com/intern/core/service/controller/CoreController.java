@@ -1,12 +1,17 @@
 package com.intern.core.service.controller;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
@@ -22,14 +27,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.intern.core.service.service.CoreService;
+import com.intern.core.service.service.UserService;
+import com.intern.core.service.dto.AcademicSupervisorResponse;
 import com.intern.core.service.dto.ApplicationRequest;
 import com.intern.core.service.dto.ApplicationResponse;
 import com.intern.core.service.dto.CompanyResponse;
+import com.intern.core.service.dto.CriteriaQuestionsResponse;
 import com.intern.core.service.dto.CriteriaRequest;
 import com.intern.core.service.dto.CriteriaResponse;
 import com.intern.core.service.dto.EvaluationCriteriasResponse;
 import com.intern.core.service.dto.EvaluationRequest;
 import com.intern.core.service.dto.EvaluationResponse;
+import com.intern.core.service.dto.IndustrySupervisorResponse;
+import com.intern.core.service.dto.QuestionResponse;
+import com.intern.core.service.dto.ReportResponse;
 import com.intern.core.service.dto.Response;
 import com.intern.core.service.dto.ResultRequest;
 import com.intern.core.service.dto.ResultResponse;
@@ -37,15 +48,40 @@ import com.intern.core.service.dto.SemesterRequest;
 import com.intern.core.service.dto.StudentEvaluationRequest;
 import com.intern.core.service.dto.StudentEvaluationResponse;
 import com.intern.core.service.dto.StudentResponse;
+import com.intern.core.service.dto.StudentResultRequest;
 import com.intern.core.service.dto.StudentResultResponse;
 import com.intern.core.service.utility.BaseUtility;
+
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @RestController
 @RequestMapping("/core")
 public class CoreController {
 
+	@Value("${spring.datasource.driver-class-name}")
+    public String driverName; 
+	
+	@Value("${spring.datasource.url}")
+    public String dbUrl; 
+	
+	@Value("${spring.datasource.username}")
+    public String dbUsername; 
+	
+	@Value("${spring.datasource.password}")
+    public String dbPassword; 
+	
 	@Autowired
 	CoreService coreService;
+	
+	@Autowired
+	UserService userService;
 	
 	@GetMapping("/welcome")
 	public String welcome() {
@@ -779,6 +815,179 @@ public class CoreController {
 		return returnResponse(null, http_status, error_desc, message_status, message_desc, message_code, message_dev, object_map);
 	}
 	
+	@PostMapping("/students/evaluations/results/pdf")
+	public ResponseEntity<byte[]> studentsResultsReport(@RequestPart("studentResultRequest") StudentResultRequest studentResultRequest) throws JRException {
+		Map<String, Object> jasperParams = new HashMap<String, Object>();
+		
+		List<StudentResultResponse> studentsResults = coreService.getStudentsResults();
+		List<StudentResultResponse> filterStudentsResults = new ArrayList<StudentResultResponse>();
+		
+		for (StudentResultResponse studentResultResponse : studentsResults) {			
+			Boolean addStatus = true;
+			
+			if (BaseUtility.isNotBlank(studentResultRequest.getFilterClass()) && !(studentResultRequest.getFilterClass().equals(studentResultResponse.getStudentClass()))) {
+				addStatus = false;
+			}
+			if (BaseUtility.isNotBlank(studentResultRequest.getFilterEvaluationStatus()) && !(studentResultRequest.getFilterEvaluationStatus().equals(studentResultResponse.getStudentEvaluationsStatus()))) {
+				addStatus = false;
+			}
+			
+			switch (studentResultResponse.getStudentEvaluationsStatus()) {
+			case "CMP":
+				studentResultResponse.setStudentEvaluationsStatus("COMPLETE");
+				break;
+			case "PND":
+				studentResultResponse.setStudentEvaluationsStatus("PENDING");
+				break;
+			}
+			
+			if (addStatus) {
+				filterStudentsResults.add(studentResultResponse);
+			}
+		}
+		
+		if (BaseUtility.isNotBlank(studentResultRequest.getFilterClass())) {
+			jasperParams.put("CLASS_FILTER", studentResultRequest.getFilterClass());
+		}
+		if (BaseUtility.isNotBlank(studentResultRequest.getFilterEvaluationStatus())) {
+			jasperParams.put("STATUS_FILTER", studentResultRequest.getFilterEvaluationStatus() == "CMP" ? "COMPLETE" : "PENDING");
+		}
+		
+		String pictureDirectory = getClass().getResource("/images/UITM_LOGO_FULL.png").toString();
+		jasperParams.put("PICTURE_DIRECTORY", pictureDirectory.replace("file:/", ""));
+		
+		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(filterStudentsResults);
+		jasperParams.put("STUDENT_RESULT", dataSource);
+		
+		InputStream inputStream = getClass().getResourceAsStream("/report/REPORT.jrxml");
+		JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, jasperParams, new JREmptyDataSource());
+		
+		byte data[] = JasperExportManager.exportReportToPdf(jasperPrint);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=Report.pdf");
+		headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+		
+		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(data);
+	}
+	
+	@GetMapping("/student/evaluation/result/pdf/{studentMatricNumber}/{evaluationId}/{studentEvaluationId}")
+	public ResponseEntity<byte[]> studentResultReport(@PathVariable("studentMatricNumber") String studentMatricNumber, @PathVariable("evaluationId") String evaluationId, @PathVariable("studentEvaluationId") String studentEvaluationId) throws Exception {
+		Map<String, Object> jasperParams = new HashMap<String, Object>();
+		List<ReportResponse> reportResponses = new ArrayList<ReportResponse>();
+		
+		if (BaseUtility.isNotBlank(studentMatricNumber) && BaseUtility.isNotBlank(evaluationId) && BaseUtility.isNotBlank(studentEvaluationId)) {
+			StudentResponse studentResponse = userService.getStudentByStudentMatricNum(studentMatricNumber);
+			AcademicSupervisorResponse academicSupervisorResponse = new AcademicSupervisorResponse();
+			IndustrySupervisorResponse industrySupervisorResponse = new IndustrySupervisorResponse();
+			CompanyResponse companyResponse = new CompanyResponse();
+			
+			if (BaseUtility.isNotBlank(studentResponse.getAcademicSvId())) {
+				academicSupervisorResponse = userService.getAcademicSupervisorByAcademicSvId(studentResponse.getAcademicSvId());
+			}
+			if (BaseUtility.isNotBlank(studentResponse.getIndustrySvId())) {
+				industrySupervisorResponse = userService.getIndustrySupervisorByIndustrySvId(studentResponse.getIndustrySvId());
+			}
+			if (BaseUtility.isObjectNotNull(industrySupervisorResponse)) {
+				if (BaseUtility.isNotBlank(industrySupervisorResponse.getCompanyId())) {
+					companyResponse = userService.getCompanyByCompanyId(industrySupervisorResponse.getCompanyId());
+				}
+			}
+			
+			Integer evaluationTotalPercentage = 0;
+			EvaluationCriteriasResponse evaluationCriteriasResponse = coreService.getCompleteEvaluation(evaluationId, studentEvaluationId);
+			
+			for (CriteriaQuestionsResponse criteriaQuestionsResponse : evaluationCriteriasResponse.getCriterias()) {
+				Float criteriaTotalMark = 0.0f;
+				for (QuestionResponse questionResponse : criteriaQuestionsResponse.getQuestions()) {
+					criteriaTotalMark = criteriaTotalMark + questionResponse.getQuestionResult().getResultTotalMark();
+				}
+				
+				for (QuestionResponse questionResponse : criteriaQuestionsResponse.getQuestions()) {
+					ReportResponse reportResponse = new ReportResponse();
+					
+					reportResponse.setQuestionId(questionResponse.getQuestionId());
+					reportResponse.setQuestionNumber(questionResponse.getQuestionNumber());
+
+					String questionDescription = questionResponse.getQuestionDesc();
+					questionDescription = questionDescription.replaceAll("<strong>", "<b>");
+					questionDescription = questionDescription.replaceAll("</strong>", "</b>");
+					reportResponse.setQuestionDesc(questionDescription);
+					
+					reportResponse.setQuestionCategoryCode(questionResponse.getQuestionCategoryCode());
+					reportResponse.setQuestionCategoryDesc(questionResponse.getQuestionCategoryDesc());
+					reportResponse.setQuestionWeightage(questionResponse.getQuestionWeightage());
+					
+					reportResponse.setResultScore(Math.round(questionResponse.getQuestionResult().getResultScore()));
+					reportResponse.setResultTotalMark(questionResponse.getQuestionResult().getResultTotalMark());
+					
+					CriteriaResponse criteriaResponse = criteriaQuestionsResponse.getCriteria();
+					reportResponse.setCriteriaId(criteriaResponse.getCriteriaId());
+					reportResponse.setCriteriaName(criteriaResponse.getCriteriaName());
+					reportResponse.setCriteriaDesc(criteriaResponse.getCriteriaDesc());
+					reportResponse.setCriteriaPercentage(criteriaResponse.getCriteriaPercentage());
+					
+					if (questionResponse.getCriteriaId().equals(criteriaResponse.getCriteriaId())) {
+						Float percent = (criteriaQuestionsResponse.getCriteria().getCriteriaPercentage().floatValue() / 100);
+						reportResponse.setCriteriaTotalMark(criteriaTotalMark * percent);
+					}
+					
+					reportResponses.add(reportResponse);
+				}
+				
+				evaluationTotalPercentage = evaluationTotalPercentage + criteriaQuestionsResponse.getCriteria().getCriteriaPercentage();
+			}
+			
+			StudentEvaluationResponse studentEvaluationResponse = coreService.getStudentEvaluationByStudentEvaluationId(studentEvaluationId);
+			if (BaseUtility.isObjectNotNull(studentEvaluationResponse)) {
+				jasperParams.put("EVALUATION_COMMENT", studentEvaluationResponse.getStudentEvaluationComment());
+				jasperParams.put("EVALUATION_TOTAL_SCORE", studentEvaluationResponse.getStudentEvaluationTotalScore());
+			}
+			
+			EvaluationResponse evaluationResponse = coreService.getEvaluationByEvaluationId(evaluationId);
+			if (BaseUtility.isObjectNotNull(evaluationResponse)) {
+				jasperParams.put("EVALUATION_NAME", evaluationResponse.getEvaluationName());
+			}
+			
+			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportResponses);
+			jasperParams.put("criteriaId", dataSource);
+			jasperParams.put("criteriaName", dataSource);
+			jasperParams.put("criteriaDesc", dataSource);
+			jasperParams.put("criteriaPercentage", dataSource);
+			jasperParams.put("criteriaTotalMark", dataSource);
+			jasperParams.put("questionDesc", dataSource);
+			jasperParams.put("questionWeightage", dataSource);
+			jasperParams.put("resultScore", dataSource);
+			jasperParams.put("resultTotalMark", dataSource);
+			
+			jasperParams.put("STUDENT_NAME", studentResponse.getStudentName());
+			jasperParams.put("STUDENT_MATRIC_NUMBER", studentResponse.getStudentMatricNum());
+			jasperParams.put("ACADEMIC_COACH", academicSupervisorResponse.getAcademicSvName());
+			jasperParams.put("INDUSTRY_COACH", industrySupervisorResponse.getIndustrySvName());
+			jasperParams.put("COMPANY_NAME", companyResponse.getCompanyName());
+			jasperParams.put("PROJECT_TITLE", studentResponse.getStudentProject());
+			jasperParams.put("EVALUATION_TOTAL_PERCENTAGE", evaluationTotalPercentage);
+
+			String pictureDirectory = getClass().getResource("/images/UITM_LOGO_FULL.png").toString();
+			jasperParams.put("PICTURE_DIRECTORY", pictureDirectory.replace("file:/", ""));
+			
+			InputStream inputStream = getClass().getResourceAsStream("/report/STUDENT_RESULT_REPORT.jrxml");
+			JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, jasperParams, dataSource);
+			
+			byte data[] = JasperExportManager.exportReportToPdf(jasperPrint);
+			
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=Report.pdf");
+			headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+			
+			return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(data);
+		} else {
+			return ResponseEntity.ok().body(null);
+		}
+	}
+
 	public ResponseEntity<Response> returnResponse(Errors errors, HttpStatus http_status, String error_desc, Boolean msg_status, String msg_desc, String msg_code, String msg_dev, Map<Object, Object> object_map) {
 		if (BaseUtility.isObjectNotNull(errors)) {
 			if (errors.hasErrors()) {

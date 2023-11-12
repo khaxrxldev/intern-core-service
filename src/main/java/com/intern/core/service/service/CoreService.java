@@ -52,6 +52,8 @@ public interface CoreService {
 	
 	List<StudentEvaluationResponse> filterStudentEvaluations(StudentEvaluationRequest studentEvaluationRequest);
 	
+	StudentEvaluationResponse getStudentEvaluationByStudentEvaluationId(String studentEvaluationId);
+	
 	List<StudentEvaluationResponse> insertStudentEvaluations(List<SemesterRequest> semesterRequests, String studentMatricNum) throws Exception;
 	
 	StudentEvaluationResponse insertStudentEvaluation(StudentEvaluationRequest studentEvaluationRequest, MultipartFile attachFile) throws Exception;

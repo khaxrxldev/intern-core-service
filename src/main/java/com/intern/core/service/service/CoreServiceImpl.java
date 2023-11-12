@@ -13,6 +13,7 @@ import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -488,7 +489,11 @@ public class CoreServiceImpl implements CoreService {
 			
 			CompanyEntity existedCompanyEntity = companyRepository.findByCompanyId(insertedApplicationEntity.getCompanyId());
 			
-			sendEmail(existedCompanyEntity.getCompanyHrEmail(), insertedApplicationEntity.getApplicationId());
+			StudentEntity existedStudentEntity = studentRepository.findByStudentMatricNum(applicationRequest.getStudentMatricNum());
+			
+			if (BaseUtility.isObjectNotNull(existedCompanyEntity) && BaseUtility.isObjectNotNull(existedStudentEntity)) {
+				sendEmail(existedCompanyEntity.getCompanyHrEmail(), insertedApplicationEntity.getApplicationId(), existedStudentEntity.getStudentName(), existedStudentEntity.getStudentMatricNum());
+			}
 		} else {
 			throw new Exception();
 		}
@@ -707,6 +712,36 @@ public class CoreServiceImpl implements CoreService {
 		return studentEvaluationResponses;
 	}
 
+	@Override
+	public StudentEvaluationResponse getStudentEvaluationByStudentEvaluationId(String studentEvaluationId) {
+		StudentEvaluationResponse studentEvaluationResponse = new StudentEvaluationResponse();
+		StudentEvaluationEntity existedStudentEvaluationEntity = studentEvaluationRepository.findByStudentEvaluationId(studentEvaluationId);
+		
+		if (BaseUtility.isObjectNotNull(existedStudentEvaluationEntity)) {
+			studentEvaluationResponse.setStudentEvaluationId(existedStudentEvaluationEntity.getStudentEvaluationId());
+			studentEvaluationResponse.setStudentEvaluationDate(DateUtility.convertToLocalDateTime(existedStudentEvaluationEntity.getStudentEvaluationDate()));
+			studentEvaluationResponse.setStudentEvaluationStartDate(DateUtility.convertToLocalDateTime(existedStudentEvaluationEntity.getStudentEvaluationStartDate()));
+			studentEvaluationResponse.setStudentEvaluationEndDate(DateUtility.convertToLocalDateTime(existedStudentEvaluationEntity.getStudentEvaluationEndDate()));
+			studentEvaluationResponse.setStudentEvaluationStatus(existedStudentEvaluationEntity.getStudentEvaluationStatus());
+			
+			studentEvaluationResponse.setStudentEvaluationAttachFileName(existedStudentEvaluationEntity.getStudentEvaluationAttachFileName());
+			studentEvaluationResponse.setStudentEvaluationAttach(existedStudentEvaluationEntity.getStudentEvaluationAttach());
+			studentEvaluationResponse.setStudentEvaluationAttachDate(DateUtility.convertToLocalDateTime(existedStudentEvaluationEntity.getStudentEvaluationAttachDate()));
+
+			studentEvaluationResponse.setStudentEvaluationComment(existedStudentEvaluationEntity.getStudentEvaluationComment());
+			studentEvaluationResponse.setStudentEvaluationTotalScore(existedStudentEvaluationEntity.getStudentEvaluationTotalScore());
+			studentEvaluationResponse.setEvaluationId(existedStudentEvaluationEntity.getEvaluationId());
+			studentEvaluationResponse.setStudentMatricNum(existedStudentEvaluationEntity.getStudentMatricNum());
+			studentEvaluationResponse.setAcademicSvId(existedStudentEvaluationEntity.getAcademicSvId());
+			studentEvaluationResponse.setIndustrySvId(existedStudentEvaluationEntity.getIndustrySvId());
+			studentEvaluationResponse.setSemesterId(existedStudentEvaluationEntity.getSemesterId());
+			
+			return studentEvaluationResponse;
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public List<StudentEvaluationResponse> insertStudentEvaluations(List<SemesterRequest> semesterRequests, String studentMatricNum) throws Exception {
 		List<StudentEvaluationResponse> studentEvaluationResponses = new ArrayList<StudentEvaluationResponse>();
@@ -993,33 +1028,6 @@ public class CoreServiceImpl implements CoreService {
 		}
 
 		return updateStatus;
-	}
-	
-	public Boolean sendEmail(String to, String applicationId) {
-		Boolean emailSendStatus = false;
-		String htmlString = null;
-		
-		htmlString = "<!DOCTYPE html> <html> <body>  <a href=\"http://localhost:4200/company-approval/" + applicationId + "\">Visit</a> </body> </html> ";
-		
-		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-		MimeMessageHelper mimeMessageHelper;
-		
-		try {
-			mimeMessageHelper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
-			
-			mimeMessageHelper.setTo(to);
-			mimeMessageHelper.setFrom("noreply@khaxrxldev.com");
-			mimeMessageHelper.setSubject("Internship Application: ");
-			mimeMessageHelper.setText(htmlString, true);
-			
-			javaMailSender.send(mimeMessage);
-			emailSendStatus = true;
-			
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
-		
-		return emailSendStatus;
 	}
 
 	@Override
@@ -1403,6 +1411,35 @@ public class CoreServiceImpl implements CoreService {
 				}
 			}
 		}
+		
 		return studentEvaluationStarted;
+	}
+	
+	public Boolean sendEmail(String to, String applicationId, String studentName, String studentMatricNumber) {
+		Boolean emailSendStatus = false;
+		String htmlString = "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtmll/DTD/xhtmll-transitional.dtd'> <html lang='en' xmlns='http://www.w3.org/1999/xhtml' lang='en'> <head> <meta http-equiv='Content-Type' content='text/html; charset=utf-8'> <meta http-equiv='X-UA-Compatible' content='IE=edge'> <meta name='viewport' content='width=device-width, initial-scale=1.0'> <title>Document</title> <style type='text/css'> @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap'); @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap'); body { Margin: 0; padding: 0; min-width: 100%; background-color: #f2f2f2; } .email-container { margin: 0 auto; max-width: 600px; background-color: #fff; border: 1px solid #000; } .email-preheader { font-size: 0px; color: f2f2f2; line-height: 1px; display: none; overflow: hidden; max-width: 0px; max-height: 0px; opacity: 0; } table { border-spacing: 0; Margin: 0; padding: 0; width: 100%; max-width: 600px; } td { padding: 0; } .header-table { font-family: 'Lora', serif; } .body-table { font-family: 'Roboto', sans-serif; font-weight: 400; font-size: 13px; letter-spacing: 0.2px; } .body-table-content { padding: 50px; } @media screen and (max-width: 600px) { .body-table-content { padding: 50px 10px; } } @media screen and (max-width: 400px) { .body-table-content { padding: 50px 10px; } } </style> </head> <body> <div class='email-container'> <div class='email-preheader'>Internship Application</div> <table align='center' role='presentation'> <tr> <td> <table class='header-table'> <tr> <td style='width: 30%; height: 30px; background-color: #211D70;'> </td> <td style='width: 45%; height: 30px; background-color: #211D70; border-right: 2px solid #000;'> </td> <td style='width: 25%; height: 30px; background-color: #61116A;'> </td> </tr> <tr> <td style='padding: 8px; font-size: 13px; font-weight: 700; text-align: center; vertical-align: top;'>Fakulti Sains Komputer dan Matematik</td> <td style='padding: 8px; font-size: 13px; text-align: end; border-right: 2px solid #000;'> <span style='font-weight: 700;'>Universiti Teknologi MARA(Melaka)</span> <span style='font-weight: 500;'><br> Kampus Jasin <br> 77300 Merlimau, Jasin <br> Melaka Bandaraya Bersejarah <br> Tel: (+606) 2645000</span> </td> <td style='padding: 8px;'> <img width='100%' src='cid:uitm_logo'> </td> </tr> </table> <table class='body-table'> <tr> <td class='body-table-content'> <div style='font-weight: 900;'>TO WHOM IT MAY CONCERN</div> <br> <p>Dear Sir/Madam,</p> <br> <p style='font-weight: 900;'>APPLICATION FOR INDUSTRIAL TRAINING PLACEMENT</p> <br> <p> <table style='font-weight: 900;'> <tr> <td style=\"width: 40%;\">NAME OF STUDENT</td> <td style=\"width: 60%;\"> : "+ studentName +"</td> </tr> <tr> <td style=\"width: 40%;\">MATRIC NUMBER</td> <td style=\"width: 60%;\"> : "+ studentMatricNumber +"</td> </tr> </table> </p> <br> <p style='text-align: justify;'> You have received an internship application from the student above. Please head to the this <b><a href='http://localhost:4200/company-approval/"+ applicationId +"' target='_blank'>link</a></b> for further internship application details. </p> </td> </tr> </table> </td> </tr> </table> </div> </body> </html>";
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper mimeMessageHelper;
+		
+		try {
+			mimeMessageHelper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+			
+			mimeMessageHelper.setTo(to);
+			mimeMessageHelper.setFrom("noreply@khaxrxldev.com");
+			mimeMessageHelper.setSubject("APPLICATION FOR INDUSTRIAL TRAINING PLACEMENT");
+			mimeMessageHelper.setText(htmlString, true);
+			
+			ClassPathResource imagePath = new ClassPathResource("images/UITM_LOGO_FULL.png");
+			mimeMessageHelper.addInline("uitm_logo", imagePath);
+			
+			javaMailSender.send(mimeMessage);
+			emailSendStatus = true;
+			
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+		
+		return emailSendStatus;
 	}
 }

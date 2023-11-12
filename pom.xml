@@ -55,6 +55,19 @@
 		    <artifactId>springfox-boot-starter</artifactId>
 		    <version>3.0.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
+		<dependency>
+		    <groupId>net.sf.jasperreports</groupId>
+		    <artifactId>jasperreports</artifactId>
+		    <version>6.20.6</version>
+		</dependency>
+		<dependency>
+		    <groupId>local.jasper.aileron.fonts</groupId>
+		    <artifactId>local.jasper.aileron.fonts</artifactId>
+		    <version>1.0</version>
+		    <scope>system</scope>
+		    <systemPath>${basedir}/src/main/resources/report/Aileron.jar</systemPath>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

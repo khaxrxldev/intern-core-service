@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FirstReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" uuid="91df45c4-2e44-4158-a783-4f988cd8c461">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Sample DB"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="StudentResultDataset" uuid="9ad91121-cc12-4646-a126-9d525ee7db6d">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="studentMatricNum" class="java.lang.String"/>
+		<field name="studentName" class="java.lang.String"/>
+		<field name="studentClass" class="java.lang.String"/>
+		<field name="studentEvaluationsStatus" class="java.lang.String"/>
+		<field name="subject1TotalMark" class="java.lang.Float"/>
+		<field name="subject1Grade" class="java.lang.String"/>
+		<field name="subject1Pointer" class="java.lang.String"/>
+		<field name="subject2TotalMark" class="java.lang.Float"/>
+		<field name="subject2Grade" class="java.lang.String"/>
+		<field name="subject2Pointer" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="CLASS_FILTER" class="java.lang.String"/>
+	<parameter name="STATUS_FILTER" class="java.lang.String"/>
+	<parameter name="STUDENT_RESULT" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="PICTURE_DIRECTORY" class="java.lang.String"/>
+	<field name="studentMatricNum" class="java.lang.String"/>
+	<field name="studentName" class="java.lang.String"/>
+	<title>
+		<band height="100">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="110" y="30" width="425" height="30" uuid="b6177a7a-7775-4e56-801b-911a8c18eec2">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Aileron" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[STUDENT RESULT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="110" y="0" width="70" height="30" forecolor="#FFFFFF" backcolor="#61116A" uuid="29c4daa1-097b-4aee-8452-ab97333b4d8a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CS266]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="180" y="0" width="355" height="30" forecolor="#FFFFFF" backcolor="#211D70" uuid="a9e52bb9-f1ad-472b-8f63-1af5f69662e6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Aileron" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BACHELOR OF INFORMATION SYSTEMS (HONS.) INFORMATION SYSTEMS ENGINEERING]]></text>
+			</staticText>
+			<image>
+				<reportElement x="0" y="0" width="100" height="60" uuid="d3b5c681-cfb0-49d7-ac27-303922a5d8d9"/>
+				<imageExpression><![CDATA[$P{PICTURE_DIRECTORY}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="150">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<rectangle>
+				<reportElement mode="Transparent" x="-3" y="77" width="541" height="46" uuid="b143ed1f-c42a-4237-8a73-0a6cb9c08742">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement mode="Opaque" x="70" y="0" width="80" height="20" backcolor="#F2F2F2" uuid="604033d7-647b-4116-8cdc-28de20fb473b"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CLASS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="70" y="20" width="80" height="20" backcolor="#F2F2F2" uuid="789d087f-1515-41a4-9b6e-c161fb486a6f"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["STATUS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="0" width="320" height="20" uuid="5fb1ccdf-2eb3-4ca4-b22a-3991d2f56a41"/>
+				<box leftPadding="10">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Aileron" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{CLASS_FILTER} != null) ? $P{CLASS_FILTER} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="20" width="320" height="20" uuid="adae3ee3-f5e9-47e0-a629-99fcef631b33"/>
+				<box leftPadding="10">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Aileron" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{STATUS_FILTER} != null) ? $P{STATUS_FILTER} : ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="80" width="70" height="40" backcolor="#F2F2F2" uuid="3a3dd225-0aa7-473d-9e9a-bd030167fb16"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MATRIC NUMBER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="70" y="80" width="125" height="40" backcolor="#F2F2F2" uuid="9606d84e-3e54-4ed8-bb70-0eca036ec1ec">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FULL NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="195" y="80" width="50" height="40" backcolor="#F2F2F2" uuid="f95f0b03-2446-4ba0-b3bd-327989b72ca7"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLASS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="245" y="80" width="50" height="40" backcolor="#F2F2F2" uuid="6ba1f710-21bd-4f09-9673-e7d224578b4c"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[STATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="295" y="100" width="40" height="20" backcolor="#F2F2F2" uuid="135662b7-7fe6-45c5-a996-942e1df26d0b"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MARK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="335" y="100" width="40" height="20" backcolor="#F2F2F2" uuid="dcf4399a-bf3b-43dc-bcb7-ae32fa6790c1"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GRADE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="375" y="100" width="40" height="20" backcolor="#F2F2F2" uuid="92958bed-81a4-4cde-a20f-110673bedecb"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[POINTER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="295" y="80" width="120" height="20" backcolor="#F2F2F2" uuid="8f7a389d-5400-42a8-85e3-6a3419ff6348"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CST656]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="415" y="100" width="40" height="20" backcolor="#F2F2F2" uuid="d9803651-91ab-44cc-9b51-8fb009ed5646"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MARK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="455" y="100" width="40" height="20" backcolor="#F2F2F2" uuid="be44ed3b-f52c-4683-a7a8-bb0980c4e61e"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GRADE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="495" y="100" width="40" height="20" backcolor="#F2F2F2" uuid="2d739503-7dc8-46a2-9f68-a7a42e4a5715"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[POINTER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="415" y="80" width="120" height="20" backcolor="#F2F2F2" uuid="afeda470-d512-4141-b5c1-0cf283115664"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Aileron" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CST656]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement stretchType="ContainerHeight" mode="Transparent" x="-3" y="123" width="541" height="25" uuid="ac9eed57-b262-4496-be70-4b01b97d5c30">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</rectangle>
+			<componentElement>
+				<reportElement x="0" y="126" width="535" height="19" uuid="1f4a9692-a239-4f31-9872-0c7fc31101a4">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="StudentResultDataset" uuid="d7a590c3-f61d-4a54-9628-d9bf826376d3">
+						<dataSourceExpression><![CDATA[$P{STUDENT_RESULT}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="70" uuid="58ea7e8b-cfd3-49d1-b939-71ed286e4797">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:detailCell style="Table_TD" height="20">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<box>
+								<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="70" height="20" uuid="e85fa965-a772-441f-89d3-c57733b89ccf"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Aileron" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{studentMatricNum}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="125" uuid="82399346-19ac-4e5a-92f1-62a09310ea71">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:detailCell style="Table_TD" height="20">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<box>
+								<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="125" height="20" uuid="652e6f3b-fc28-490b-b86e-6579fc5e8bce"/>
+								<box leftPadding="5"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font fontName="Aileron" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{studentName}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50" uuid="eaebd519-8be0-447e-b503-048e7a15fd82">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						<jr:detailCell style="Table_TD" height="20">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<box>
+								<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="50" height="20" uuid="66a0228c-686a-454c-9977-942a88d27dbc"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Aileron" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{studentClass}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50" uuid="05269346-f066-4f12-937e-52a1ec7c0acb">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+						<jr:detailCell style="Table_TD" height="20">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<box>
+								<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="50" height="20" uuid="98d46449-b869-476d-9fb3-62c1c1fb85b7"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Aileron" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{studentEvaluationsStatus}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="b4cda5b5-5c99-4872-95be-3bf73176298f">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+						<jr:detailCell style="Table_TD" height="20">
+							<box>
+								<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="40" height="20" uuid="5999540e-172e-4976-aad6-85edb65abb5b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Aileron" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{subject1TotalMark}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="653b3f0c-2a65-4eaa-a704-63666da2a031">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+						<jr:detailCell style="Table_TD" height="20">
+							<box>
+								<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="40" height="20" uuid="15d41f42-f04e-4ed1-94b4-5bc4c0d8ff9c"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Aileron" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{subject1Grade}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="32dbf7d8-aad0-413e-8663-b8d4e464e7cd">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+						<jr:detailCell style="Table_TD" height="20">
+							<box>
+								<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="40" height="20" uuid="4d45c152-b594-48de-94b7-a07fcbfbad2d"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Aileron" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{subject1Pointer}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="ae8fdf30-ea0a-497a-9bc1-abd34efdf3ec">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
+						<jr:detailCell style="Table_TD" height="20">
+							<box>
+								<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="40" height="20" uuid="66627735-76b3-4557-a5b2-6820c88acc2f"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Aileron" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{subject2TotalMark}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="492a7489-43d1-46fb-8590-eff9c065c076">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column9"/>
+						<jr:detailCell style="Table_TD" height="20">
+							<box>
+								<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="40" height="20" uuid="0b7f717b-26f1-4fbb-8a78-8a01093dda60"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Aileron" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{subject2Grade}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="753eb278-72c2-450d-a87b-9a3368e0e4af">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column10"/>
+						<jr:detailCell style="Table_TD" height="20">
+							<box>
+								<pen lineWidth="2.0" lineStyle="Double" lineColor="#BFBFBF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="40" height="20" uuid="5cfd7705-1c0a-4d95-9ef2-17e0767131e6"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="Aileron" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{subject2Pointer}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>
