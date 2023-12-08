@@ -342,6 +342,12 @@ public class CoreServiceImpl implements CoreService {
 			}
 		}
 		
+		for (ApplicationEntity applicationEntity : applicationEntities) {
+			if (applicationEntity.getApplicationStudStatus().equals("ACP") && applicationEntity.getApplicationCompStatus().equals("ACP")) {
+				applyBtnStatus = false;
+			}
+		}
+		
 		// list of company ID applied by student
 		List<String> appliedCompaniesId = new ArrayList<String>();
 		for (ApplicationEntity applicationEntity : applicationEntities) {
