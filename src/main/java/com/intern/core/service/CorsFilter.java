@@ -17,7 +17,7 @@ public class CorsFilter extends OncePerRequestFilter{
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-		response.setHeader("Access-Control-Allow-Headers", "content-type, xsrf-token, Cache-Control");
+		response.setHeader("Access-Control-Allow-Headers", "content-type, xsrf-token, Cache-Control, ngrok-skip-browser-warning");
 		response.setHeader("Access-Control-Expose-Headers", "xsrf-token");
 		
 		if ("OPTIONS".equals(request.getMethod())) {
